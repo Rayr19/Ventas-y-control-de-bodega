@@ -51,4 +51,32 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
             else:
                 print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: POR COBRAR a [", h_deudores[i], "]")
         print("Reporte correcto")
-                
+
+def menu_principal():
+    opcion = "0"
+    while opcion != "5":
+        print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
+        print("1. Registrar venta")
+        print("2. Ver stock")
+        print("3. Agregar producto")
+        print("4. Generar reporte")
+        print("5. Salir")
+        
+        opcion = input("Seleccione una opcion: ")
+        
+        if opcion == "1":
+            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "2":
+            ver_stock(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "3":
+            agregar_producto(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "4":
+            generar_reporte(historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "5":
+
+            print("Cierre correcto. Saliendo del sistema...")
+        else:
+            print("Opcion no valida, intente de nuevo.")
+
+menu_principal()        
+             
