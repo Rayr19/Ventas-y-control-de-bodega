@@ -6,6 +6,78 @@ stock_productos = [30, 20, 15]
 historial_ventas = []
 historial_montos = []
 historial_deudores = []
+
+def registrar_venta(nombres, precios, stock, h_ventas, h_montos, h_deudores):
+    print("\n--- REGISTRAR NUEVA VENTA ---")
+    
+    if len(h_ventas) >= 50:
+        print("Error: Se ha alcanzado el límite de 50 ventas.")
+        return
+
+    producto = input("Ingrese nombre del producto: ")
+    
+    indice = -1
+    for i in range(len(nombres)):
+        if nombres[i] == producto:
+            indice = i
+
+    if indice != -1:
+
+        cantidad_texto = input("Ingrese cantidad: ")
+        while not cantidad_texto.isdigit() or int(cantidad_texto) <= 0:
+            print("Error: Debe ingresar un número entero mayor a 0.")
+            cantidad_texto = input("Ingrese cantidad: ")
+        cantidad = int(cantidad_texto)
+
+
+        if stock[indice] >= cantidad:
+            total = precios[indice] * cantidad
+            print("Total de la venta: S/.", total)
+
+            print("Tipo de pago:")
+            print("1. Efectivo")
+            print("2. Fiado")
+            tipo_pago = input("Seleccione una opción (1 o 2): ")
+            while tipo_pago != "1" and tipo_pago != "2":
+                print("Error: Opción no válida. Ingrese 1 o 2.")
+                tipo_pago = input("Seleccione una opción (1 o 2): ")
+
+
+            if tipo_pago == "1":
+                dinero_texto = input("Ingrese dinero recibido: ")
+
+                
+                while not dinero_texto.replace(".", "", 1).isdigit() or float(dinero_texto) < total:
+                    print("Error: Dinero insuficiente o formato incorrecto.")
+                    dinero_texto = input("Ingrese dinero recibido: ")
+                
+                dinero = float(dinero_texto)
+                vuelto = dinero - total
+                print("Vuelto correcto: S/.", vuelto)
+                print("Venta registrada correctamente.")
+                estado_pago = "Efectivo"
+            
+            else:
+                cliente = input("Ingrese nombre del Cliente que debe: ")
+                while cliente == "":
+                    print("Error: El nombre del cliente no puede estar vacío.")
+                    cliente = input("Ingrese nombre del Cliente que debe: ")
+                
+                print("Fiado registrado. Deuda de S/.", total, " guardada para el cliente ", cliente)
+                estado_pago = cliente
+
+            h_ventas.append(nombres[indice])
+            h_montos.append(total)
+            h_deudores.append(estado_pago)
+
+            stock[indice] = stock[indice] - cantidad
+            print("Stock actualizado:", stock[indice], "unidades restantes.")
+        else:
+            print("Error: No hay suficiente stock disponible.")
+    else:
+        print("El producto no existe en el inventario.")
+
+
 def ver_stock(nombres, precios, stock):
     print("\n--- CONSULTA DE STOCK ---")
     for i in range(len(nombres)):
