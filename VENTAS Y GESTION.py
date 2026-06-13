@@ -40,15 +40,29 @@ def agregar_producto(nombres, precios, stock):
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
 
+
+        
+
 def generar_reporte(h_ventas, h_montos, h_deudores):
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
-    if len(h_ventas) == 0:
-        print("No hay ventas registradas en el sistema.")
+
+    # MEJORA 1: Valida que las listas tengan la misma cantidad de elementos
+    if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
+        print("Error: Las listas contienen diferentes cantidades de elementos.")
+        return
     else:
         for i in range(len(h_ventas)):
             if h_deudores[i] == "Efectivo":
                 print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: PAGADO (Efectivo)")
             else:
                 print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: POR COBRAR a [", h_deudores[i], "]")
-        print("Reporte correcto")
-                
+        print("Reporte correcto") 
+ 
+
+
+
+
+
+
+
+
