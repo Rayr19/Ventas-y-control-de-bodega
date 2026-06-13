@@ -166,6 +166,17 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
         print("Promedio por venta: S/.", round(promedio, 2))
         print("Reporte completado correctamente")
 
+        ranking = {}
+        for producto in h_ventas:
+            if producto in ranking:
+                ranking[producto] += 1
+            else:
+                ranking[producto] = 1
+
+        # MEJORA 6: Mostrar el ranking de productos más vendidos
+        print("\n--- RANKING DE PRODUCTOS ---")
+        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
+            print(f"{producto}: {cantidad} unidades vendidas")
 
     
         
