@@ -122,6 +122,17 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
     if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
         print("Error: Las listas contienen diferentes cantidades de elementos.")
         return
+    
+    # MEJORA 2: Validar que los montos sean numéricos
+    for monto in h_montos:
+        if not isinstance(monto, (int, float)):
+            print("Error: Existe un monto no numérico.")
+            return
+
+    if len(h_ventas) == 0:
+        print("No hay ventas registradas en el sistema.")
+
+
     else:
         for i in range(len(h_ventas)):
             if h_deudores[i] == "Efectivo":
@@ -134,6 +145,37 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
 
 
 
+
+
+
+def menu_principal():
+    opcion = "0"
+    while opcion != "5":
+        print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
+        print("1. Registrar venta")
+        print("2. Ver stock")
+        print("3. Agregar producto")
+        print("4. Generar reporte")
+        print("5. Salir")
+        
+        opcion = input("Seleccione una opcion: ")
+        
+        if opcion == "1":
+            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "2":
+            ver_stock(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "3":
+            agregar_producto(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "4":
+            generar_reporte(historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "5":
+
+            print("Cierre correcto. Saliendo del sistema...")
+        else:
+            print("Opcion no valida, intente de nuevo.")
+
+menu_principal()        
+             
 
 
 
