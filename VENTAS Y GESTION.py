@@ -16,18 +16,15 @@ def ver_stock(nombres, precios, stock):
 def agregar_producto(nombres, precios, stock):
     print("\n--- AGREGAR PRODUCTO ---")
     if len(nombres) < 50:
-        nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
-        while nuevo_nombre == "":
-            print("Error: El nombre no puede estar vacío.")
-            nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
-            # ACTUALIZACIÓN 1:
+       # ACTUALIZACIÓN 1:
         # Eliminar espacios innecesarios al inicio y final del nombre.
         nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
 
         while nuevo_nombre == "":
             print("Error: El nombre no puede estar vacío.")
             nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
-            # ACTUALIZACIÓN 2:
+
+        # ACTUALIZACIÓN 2:
         # Estandarizar el nombre del producto para mantener uniformidad.
         nuevo_nombre = nuevo_nombre.title()
 
@@ -45,11 +42,19 @@ def agregar_producto(nombres, precios, stock):
         # ACTUALIZACIÓN 3:
         # Solicitar confirmación antes de registrar el producto.
         confirmar = input("¿Desea guardar el producto? (S/N): ").upper()
+
         if confirmar == "S":
 
-         nombres.append(nuevo_nombre)
-         precios.append(nuevo_precio)
-         stock.append(nuevo_stock)
+          nombres.append(nuevo_nombre)
+          precios.append(nuevo_precio)
+          stock.append(nuevo_stock)
+
+          # ACTUALIZACIÓN 4:
+          # Mostrar un resumen de los datos registrados.
+          print("\n--- RESUMEN DEL PRODUCTO ---")
+          print("Nombre:", nuevo_nombre)
+          print("Precio: S/.", nuevo_precio)
+          print("Stock:", nuevo_stock)
         print("Registro válido: Producto agregado correctamente.")
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
