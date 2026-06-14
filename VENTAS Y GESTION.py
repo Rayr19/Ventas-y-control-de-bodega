@@ -59,6 +59,12 @@ def agregar_producto(nombres, precios, stock):
           # Mostrar la cantidad total de productos registrados.
           print("Total de productos registrados:", len(nombres))
 
-        print("Registro válido: Producto agregado correctamente.")
+          # ACTUALIZACIÓN 6:
+          # Mostrar confirmación personalizada del producto agregado.
+          print(f"Producto '{nuevo_nombre}' agregado correctamente.")
+
+        else:
+            print("Operación cancelada.")
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
+agregar_producto(nombres_productos, precios_productos, stock_productos)
