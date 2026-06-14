@@ -122,18 +122,99 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
     if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
         print("Error: Las listas contienen diferentes cantidades de elementos.")
         return
-    else:
-        for i in range(len(h_ventas)):
-            if h_deudores[i] == "Efectivo":
-                print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: PAGADO (Efectivo)")
-            else:
-                print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: POR COBRAR a [", h_deudores[i], "]")
+    
+    # MEJORA 2: Validar que los montos sean numéricos
+    for monto in h_montos:
+        if not isinstance(monto, (int, float)):
+            print("Error: Existe un monto no numérico.")
+            return
 
-        print("Reporte correcto") 
+    if len(h_ventas) == 0:
+        print("No hay ventas registradas en el sistema.")
+
+    # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
+    else:
+        total_vendido = 0
+        ventas_pagadas = 0
+        ventas_credito = 0
+        
+        for i in range(len(h_ventas)):
+            total_vendido += h_montos[i]
+
+            if h_deudores[i] == "Efectivo":
+                ventas_pagadas += 1
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: PAGADO (Efectivo)")
+            else:
+                ventas_credito += 1
+                
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
+            
+        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
+        print("\n--- RESUMEN ---")
+        print("Total vendido: S/.", total_vendido)
+        print("Ventas pagadas:", ventas_pagadas)
+        print("Ventas por cobrar:", ventas_credito)
+
+ # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
+        promedio = total_vendido / len(h_ventas)
+        print("Promedio por venta: S/.", round(promedio, 2))
+        print("Reporte completado correctamente")
+
+        ranking = {}
+        for producto in h_ventas:
+            if producto in ranking:
+                ranking[producto] += 1
+            else:
+                ranking[producto] = 1
+
+        # MEJORA 6: Mostrar el ranking de productos más vendidos
+        print("\n--- RANKING DE PRODUCTOS ---")
+        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
+            print(f"{producto}: {cantidad} unidades vendidas")
+
+    
+        
  
 
 
 
+
+
+
+def menu_principal():
+    opcion = "0"
+    while opcion != "5":
+        print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
+        print("1. Registrar venta")
+        print("2. Ver stock")
+        print("3. Agregar producto")
+        print("4. Generar reporte")
+        print("5. Salir")
+        
+        opcion = input("Seleccione una opcion: ")
+        
+        if opcion == "1":
+            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "2":
+            ver_stock(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "3":
+            agregar_producto(nombres_productos, precios_productos, stock_productos)
+        elif opcion == "4":
+            generar_reporte(historial_ventas, historial_montos, historial_deudores)
+        elif opcion == "5":
+
+            print("Cierre correcto. Saliendo del sistema...")
+        else:
+            print("Opcion no valida, intente de nuevo.")
+
+menu_principal()        
+             
 
 
 
