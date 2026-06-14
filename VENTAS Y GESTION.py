@@ -20,6 +20,13 @@ def agregar_producto(nombres, precios, stock):
         while nuevo_nombre == "":
             print("Error: El nombre no puede estar vacío.")
             nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
+            # ACTUALIZACIÓN 1:
+        # Eliminar espacios innecesarios al inicio y final del nombre.
+        nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+
+        while nuevo_nombre == "":
+            print("Error: El nombre no puede estar vacío.")
+            nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
 
         precio_texto = input("Ingrese precio del producto: ")
         while not precio_texto.replace(".", "", 1).isdigit() or float(precio_texto) <= 0:
