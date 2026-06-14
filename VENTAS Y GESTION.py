@@ -30,7 +30,7 @@ def agregar_producto(nombres, precios, stock):
             # ACTUALIZACIÓN 2:
         # Estandarizar el nombre del producto para mantener uniformidad.
         nuevo_nombre = nuevo_nombre.title()
-        
+
         precio_texto = input("Ingrese precio del producto: ")
         while not precio_texto.replace(".", "", 1).isdigit() or float(precio_texto) <= 0:
             print("Error: Ingrese un precio válido mayor a 0.")
@@ -42,10 +42,14 @@ def agregar_producto(nombres, precios, stock):
             print("Error: Ingrese un stock válido (entero mayor o igual a 0).")
             stock_texto = input("Ingrese stock inicial: ")
         nuevo_stock = int(stock_texto)
+        # ACTUALIZACIÓN 3:
+        # Solicitar confirmación antes de registrar el producto.
+        confirmar = input("¿Desea guardar el producto? (S/N): ").upper()
+        if confirmar == "S":
 
-        nombres.append(nuevo_nombre)
-        precios.append(nuevo_precio)
-        stock.append(nuevo_stock)
+         nombres.append(nuevo_nombre)
+         precios.append(nuevo_precio)
+         stock.append(nuevo_stock)
         print("Registro válido: Producto agregado correctamente.")
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
