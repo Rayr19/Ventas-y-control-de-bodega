@@ -88,10 +88,17 @@ def ver_stock(nombres, precios, stock):
 def agregar_producto(nombres, precios, stock):
     print("\n--- AGREGAR PRODUCTO ---")
     if len(nombres) < 50:
-        nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
+       # ACTUALIZACIÓN 1:
+        # Eliminar espacios innecesarios al inicio y final del nombre.
+        nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+
         while nuevo_nombre == "":
             print("Error: El nombre no puede estar vacío.")
-            nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
+            nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+
+        # ACTUALIZACIÓN 2:
+        # Estandarizar el nombre del producto para mantener uniformidad.
+        nuevo_nombre = nuevo_nombre.title()
 
         precio_texto = input("Ingrese precio del producto: ")
         while not precio_texto.replace(".", "", 1).isdigit() or float(precio_texto) <= 0:
@@ -104,11 +111,32 @@ def agregar_producto(nombres, precios, stock):
             print("Error: Ingrese un stock válido (entero mayor o igual a 0).")
             stock_texto = input("Ingrese stock inicial: ")
         nuevo_stock = int(stock_texto)
+        # ACTUALIZACIÓN 3:
+        # Solicitar confirmación antes de registrar el producto.
+        confirmar = input("¿Desea guardar el producto? (S/N): ").upper()
 
-        nombres.append(nuevo_nombre)
-        precios.append(nuevo_precio)
-        stock.append(nuevo_stock)
-        print("Registro válido: Producto agregado correctamente.")
+        if confirmar == "S":
+
+          nombres.append(nuevo_nombre)
+          precios.append(nuevo_precio)
+          stock.append(nuevo_stock)
+
+          # ACTUALIZACIÓN 4:
+          # Mostrar un resumen de los datos registrados.
+          print("\n--- RESUMEN DEL PRODUCTO ---")
+          print("Nombre:", nuevo_nombre)
+          print("Precio: S/.", nuevo_precio)
+          print("Stock:", nuevo_stock)
+          # ACTUALIZACIÓN 5:
+          # Mostrar la cantidad total de productos registrados.
+          print("Total de productos registrados:", len(nombres))
+
+          # ACTUALIZACIÓN 6:
+          # Mostrar confirmación personalizada del producto agregado.
+          print(f"Producto '{nuevo_nombre}' agregado correctamente.")
+
+        else:
+            print("Operación cancelada.")
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
 
