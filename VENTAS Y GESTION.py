@@ -153,6 +153,11 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
                       " | Monto: S/.", h_montos[i],
                       " | Estado: POR COBRAR a [", h_deudores[i], "]")
 
+        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
+        print("\n--- RESUMEN ---")
+        print("Total vendido: S/.", total_vendido)
+        print("Ventas pagadas:", ventas_pagadas)
+        print("Ventas por cobrar:", ventas_credito)
 
     
         
