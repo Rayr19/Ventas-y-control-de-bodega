@@ -88,10 +88,17 @@ def ver_stock(nombres, precios, stock):
 def agregar_producto(nombres, precios, stock):
     print("\n--- AGREGAR PRODUCTO ---")
     if len(nombres) < 50:
-        nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
+       # ACTUALIZACIÓN 1:
+        # Eliminar espacios innecesarios al inicio y final del nombre.
+        nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+
         while nuevo_nombre == "":
             print("Error: El nombre no puede estar vacío.")
-            nuevo_nombre = input("Ingrese nombre del nuevo producto: ")
+            nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+
+        # ACTUALIZACIÓN 2:
+        # Estandarizar el nombre del producto para mantener uniformidad.
+        nuevo_nombre = nuevo_nombre.title()
 
         precio_texto = input("Ingrese precio del producto: ")
         while not precio_texto.replace(".", "", 1).isdigit() or float(precio_texto) <= 0:
@@ -104,146 +111,32 @@ def agregar_producto(nombres, precios, stock):
             print("Error: Ingrese un stock válido (entero mayor o igual a 0).")
             stock_texto = input("Ingrese stock inicial: ")
         nuevo_stock = int(stock_texto)
+        # ACTUALIZACIÓN 3:
+        # Solicitar confirmación antes de registrar el producto.
+        confirmar = input("¿Desea guardar el producto? (S/N): ").upper()
 
-        nombres.append(nuevo_nombre)
-        precios.append(nuevo_precio)
-        stock.append(nuevo_stock)
-        print("Registro válido: Producto agregado correctamente.")
+        if confirmar == "S":
+
+          nombres.append(nuevo_nombre)
+          precios.append(nuevo_precio)
+          stock.append(nuevo_stock)
+
+          # ACTUALIZACIÓN 4:
+          # Mostrar un resumen de los datos registrados.
+          print("\n--- RESUMEN DEL PRODUCTO ---")
+          print("Nombre:", nuevo_nombre)
+          print("Precio: S/.", nuevo_precio)
+          print("Stock:", nuevo_stock)
+          # ACTUALIZACIÓN 5:
+          # Mostrar la cantidad total de productos registrados.
+          print("Total de productos registrados:", len(nombres))
+
+          # ACTUALIZACIÓN 6:
+          # Mostrar confirmación personalizada del producto agregado.
+          print(f"Producto '{nuevo_nombre}' agregado correctamente.")
+
+        else:
+            print("Operación cancelada.")
     else:
         print("Error: Capacidad máxima de almacén alcanzada.")
-
-
-        
-
-def generar_reporte(h_ventas, h_montos, h_deudores):
-    print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
-
-    # MEJORA 1: Valida que las listas tengan la misma cantidad de elementos
-    if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
-        print("Error: Las listas contienen diferentes cantidades de elementos.")
-        return
-    
-    # MEJORA 2: Validar que los montos sean numéricos
-    for monto in h_montos:
-        if not isinstance(monto, (int, float)):
-            print("Error: Existe un monto no numérico.")
-            return
-
-    if len(h_ventas) == 0:
-        print("No hay ventas registradas en el sistema.")
-
-    # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
-    else:
-        total_vendido = 0
-        ventas_pagadas = 0
-        ventas_credito = 0
-        
-        for i in range(len(h_ventas)):
-            total_vendido += h_montos[i]
-
-            if h_deudores[i] == "Efectivo":
-                ventas_pagadas += 1
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: PAGADO (Efectivo)")
-            else:
-                ventas_credito += 1
-                
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
-            
-        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
-        print("\n--- RESUMEN ---")
-        print("Total vendido: S/.", total_vendido)
-        print("Ventas pagadas:", ventas_pagadas)
-        print("Ventas por cobrar:", ventas_credito)
-
- # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
-        promedio = total_vendido / len(h_ventas)
-        print("Promedio por venta: S/.", round(promedio, 2))
-        print("Reporte completado correctamente")
-
-        ranking = {}
-        for producto in h_ventas:
-            if producto in ranking:
-                ranking[producto] += 1
-            else:
-                ranking[producto] = 1
-
-        # MEJORA 6: Mostrar el ranking de productos más vendidos
-        print("\n--- RANKING DE PRODUCTOS ---")
-        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
-            print(f"{producto}: {cantidad} unidades vendidas")
-
-    
-        
- 
-
-
-
-
-
-
-def menu_principal():
-    opcion = "0"
-    while opcion != "5":
-        print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
-        print("1. Registrar venta")
-        print("2. Ver stock")
-        print("3. Agregar producto")
-        print("4. Generar reporte")
-        print("5. Salir")
-        
-        opcion = input("Seleccione una opcion: ")
-        
-        if opcion == "1":
-            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
-        elif opcion == "2":
-            ver_stock(nombres_productos, precios_productos, stock_productos)
-        elif opcion == "3":
-            agregar_producto(nombres_productos, precios_productos, stock_productos)
-        elif opcion == "4":
-            generar_reporte(historial_ventas, historial_montos, historial_deudores)
-        elif opcion == "5":
-
-            print("Cierre correcto. Saliendo del sistema...")
-        else:
-            print("Opcion no valida, intente de nuevo.")
-
-menu_principal()        
-             
-
-
-
-def menu_principal():
-    opcion = "0"
-    while opcion != "5":
-        print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
-        print("1. Registrar venta")
-        print("2. Ver stock")
-        print("3. Agregar producto")
-        print("4. Generar reporte")
-        print("5. Salir")
-        
-        opcion = input("Seleccione una opcion: ")
-        
-        if opcion == "1":
-            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
-        elif opcion == "2":
-            ver_stock(nombres_productos, precios_productos, stock_productos)
-        elif opcion == "3":
-            agregar_producto(nombres_productos, precios_productos, stock_productos)
-        elif opcion == "4":
-            generar_reporte(historial_ventas, historial_montos, historial_deudores)
-        elif opcion == "5":
-
-            print("Cierre correcto. Saliendo del sistema...")
-        else:
-            print("Opcion no valida, intente de nuevo.")
-
-menu_principal()        
-             
-
+agregar_producto(nombres_productos, precios_productos, stock_productos)
