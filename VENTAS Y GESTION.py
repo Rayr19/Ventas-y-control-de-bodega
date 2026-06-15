@@ -122,7 +122,12 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
     if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
         print("Error: Las listas contienen diferentes cantidades de elementos.")
         return
-    
+    # MEJORA 2: Validar que los montos sean numéricos
+    for monto in h_montos:
+        if not isinstance(monto, (int, float)):
+            print("Error: Existe un monto no numérico.")
+            return
+        
 
 
     
