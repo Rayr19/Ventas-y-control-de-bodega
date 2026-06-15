@@ -127,7 +127,31 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
         if not isinstance(monto, (int, float)):
             print("Error: Existe un monto no numérico.")
             return
+    if len(h_ventas) == 0:
+     print("No hay ventas registradas en el sistema.")
+
+    # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
+    else:
+        total_vendido = 0
+        ventas_pagadas = 0
+        ventas_credito = 0
         
+        for i in range(len(h_ventas)):
+            total_vendido += h_montos[i]
+
+            if h_deudores[i] == "Efectivo":
+                ventas_pagadas += 1
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: PAGADO (Efectivo)")
+            else:
+                ventas_credito += 1
+                
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
 
 
     
