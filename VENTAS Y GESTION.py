@@ -158,7 +158,7 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
         print("Total vendido: S/.", total_vendido)
         print("Ventas pagadas:", ventas_pagadas)
         print("Ventas por cobrar:", ventas_credito)
-        
+
  # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
         promedio = total_vendido / len(h_ventas)
         print("Promedio por venta: S/.", round(promedio, 2))
@@ -171,7 +171,21 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
             else:
                 ranking[producto] = 1
     
-        
+     # MEJORA 6: Mostrar el ranking de productos más vendidos
+        print("\n--- RANKING DE PRODUCTOS ---")
+        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
+            print(f"{producto}: {cantidad} unidades vendidas")
+
+
+
+
+
+
+
+
+
+
+
  
 
 
