@@ -1,222 +1,280 @@
+# ============================================================
+# SISTEMA DE VENTAS Y GESTION DE BODEGA
+# Curso: Fundamentos de Programacion - CIIN1205P
+# ============================================================
 
+import os
+
+# --- DATOS INICIALES DEL INVENTARIO ---
 nombres_productos = ["Arroz", "Azucar", "Leche"]
 precios_productos = [4.5, 5.0, 4.0]
-stock_productos = [30, 20, 15]
+stock_productos   = [30, 20, 15]
 
-historial_ventas = []
-historial_montos = []
+# --- HISTORIAL DE VENTAS ---
+historial_ventas   = []
+historial_montos   = []
 historial_deudores = []
 
+
+# ============================================================
+# FUNCION 1: Registrar venta (RQ-01, RQ-02, RQ-03, RQ-06)
+# ============================================================
 def registrar_venta(nombres, precios, stock, h_ventas, h_montos, h_deudores):
     print("\n--- REGISTRAR NUEVA VENTA ---")
-    
+
+    # Validacion: limite de 50 ventas
     if len(h_ventas) >= 50:
-        print("Error: Se ha alcanzado el límite de 50 ventas.")
+        print("Error: Se ha alcanzado el limite de 50 ventas.")
         return
 
-    producto = input("Ingrese nombre del producto: ")
-    
+    # Validacion: nombre del producto no vacio
+    producto = ""
+    while producto == "":
+        producto = input("Ingrese nombre del producto: ").strip()
+        if producto == "":
+            print("Error: El nombre no puede estar vacio.")
+
+    # Buscar producto en inventario
     indice = -1
     for i in range(len(nombres)):
-        if nombres[i] == producto:
+        if nombres[i].lower() == producto.lower():
             indice = i
 
-    if indice != -1:
+    if indice == -1:
+        print("Error: El producto no existe en el inventario.")
+        return
 
-        cantidad_texto = input("Ingrese cantidad: ")
-        while not cantidad_texto.isdigit() or int(cantidad_texto) <= 0:
-            print("Error: Debe ingresar un número entero mayor a 0.")
-            cantidad_texto = input("Ingrese cantidad: ")
-        cantidad = int(cantidad_texto)
+    # Validacion: cantidad entera mayor a 0
+    cantidad_texto = ""
+    while True:
+        cantidad_texto = input("Ingrese cantidad: ").strip()
+        if cantidad_texto.isdigit() and int(cantidad_texto) > 0:
+            break
+        print("Error: Debe ingresar un numero entero mayor a 0.")
+    cantidad = int(cantidad_texto)
 
+    # Verificar stock suficiente
+    if stock[indice] < cantidad:
+        print("Error: No hay suficiente stock. Stock disponible:", stock[indice])
+        return
 
-        if stock[indice] >= cantidad:
-            total = precios[indice] * cantidad
-            print("Total de la venta: S/.", total)
+    total = precios[indice] * cantidad
+    print("Total de la venta: S/.", round(total, 2))
 
-            print("Tipo de pago:")
-            print("1. Efectivo")
-            print("2. Fiado")
-            tipo_pago = input("Seleccione una opción (1 o 2): ")
-            while tipo_pago != "1" and tipo_pago != "2":
-                print("Error: Opción no válida. Ingrese 1 o 2.")
-                tipo_pago = input("Seleccione una opción (1 o 2): ")
+    # Seleccion tipo de pago con validacion
+    print("Tipo de pago:")
+    print("1. Efectivo")
+    print("2. Fiado")
+    tipo_pago = ""
+    while tipo_pago not in ["1", "2"]:
+        tipo_pago = input("Seleccione una opcion (1 o 2): ").strip()
+        if tipo_pago not in ["1", "2"]:
+            print("Error: Opcion no valida. Ingrese 1 o 2.")
 
-
-            if tipo_pago == "1":
-                dinero_texto = input("Ingrese dinero recibido: ")
-
-                
-                while not dinero_texto.replace(".", "", 1).isdigit() or float(dinero_texto) < total:
-                    print("Error: Dinero insuficiente o formato incorrecto.")
-                    dinero_texto = input("Ingrese dinero recibido: ")
-                
+    if tipo_pago == "1":
+        # RQ-02: calcular_vuelto()
+        dinero_texto = ""
+        while True:
+            dinero_texto = input("Ingrese dinero recibido: ").strip()
+            try:
                 dinero = float(dinero_texto)
-                vuelto = dinero - total
-                print("Vuelto correcto: S/.", vuelto)
-                print("Venta registrada correctamente.")
-                estado_pago = "Efectivo"
-            
-            else:
-                cliente = input("Ingrese nombre del Cliente que debe: ")
-                while cliente == "":
-                    print("Error: El nombre del cliente no puede estar vacío.")
-                    cliente = input("Ingrese nombre del Cliente que debe: ")
-                
-                print("Fiado registrado. Deuda de S/.", total, " guardada para el cliente ", cliente)
-                estado_pago = cliente
+                if dinero < total:
+                    print("Error: Dinero insuficiente. El total es S/.", round(total, 2))
+                else:
+                    break
+            except ValueError:
+                print("Error: Ingrese un monto numerico valido.")
+        vuelto = dinero - total
+        print("Vuelto correcto: S/.", round(vuelto, 2))
+        print("Venta registrada correctamente.")
+        estado_pago = "Efectivo"
 
-            h_ventas.append(nombres[indice])
-            h_montos.append(total)
-            h_deudores.append(estado_pago)
-
-            stock[indice] = stock[indice] - cantidad
-            print("Stock actualizado:", stock[indice], "unidades restantes.")
-        else:
-            print("Error: No hay suficiente stock disponible.")
     else:
-        print("El producto no existe en el inventario.")
+        # RQ-06: registrar_fiado()
+        cliente = ""
+        while cliente == "":
+            cliente = input("Ingrese nombre del cliente que debe: ").strip()
+            if cliente == "":
+                print("Error: El nombre del cliente no puede estar vacio.")
+        print("Fiado registrado. Deuda de S/.", round(total, 2), "guardada para el cliente:", cliente)
+        estado_pago = cliente
+
+    # RQ-03: actualizar_stock()
+    stock[indice] -= cantidad
+    print("Stock actualizado:", stock[indice], "unidades restantes.")
+
+    # Guardar en historial
+    h_ventas.append(nombres[indice])
+    h_montos.append(round(total, 2))
+    h_deudores.append(estado_pago)
+
+    # Guardar en archivo ventas.txt
+    guardar_venta_archivo(nombres[indice], round(total, 2), estado_pago)
 
 
+# ============================================================
+# FUNCION 2: Ver stock (RQ-04)
+# ============================================================
 def ver_stock(nombres, precios, stock):
     print("\n--- CONSULTA DE STOCK ---")
+    if len(nombres) == 0:
+        print("No hay productos registrados.")
+        return
     for i in range(len(nombres)):
-        print("Producto:", nombres[i], " | Precio: S/.", precios[i], " | Stock:", stock[i])
+        print("Producto:", nombres[i],
+              " | Precio: S/.", precios[i],
+              " | Stock:", stock[i])
     print("Consulta correcta")
 
 
+# ============================================================
+# FUNCION 3: Agregar producto (RQ-05)
+# ============================================================
 def agregar_producto(nombres, precios, stock):
     print("\n--- AGREGAR PRODUCTO ---")
-    if len(nombres) < 50:
-       # ACTUALIZACIÓN 1:
-        # Eliminar espacios innecesarios al inicio y final del nombre.
+
+    if len(nombres) >= 50:
+        print("Error: Capacidad maxima de almacen alcanzada.")
+        return
+
+    # Validacion nombre
+    nuevo_nombre = ""
+    while nuevo_nombre == "":
         nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+        if nuevo_nombre == "":
+            print("Error: El nombre no puede estar vacio.")
 
-        while nuevo_nombre == "":
-            print("Error: El nombre no puede estar vacío.")
-            nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
+    # Validacion precio
+    while True:
+        precio_texto = input("Ingrese precio del producto: ").strip()
+        try:
+            nuevo_precio = float(precio_texto)
+            if nuevo_precio <= 0:
+                print("Error: Ingrese un precio valido mayor a 0.")
+            else:
+                break
+        except ValueError:
+            print("Error: Ingrese un numero valido.")
 
-        # ACTUALIZACIÓN 2:
-        # Estandarizar el nombre del producto para mantener uniformidad.
-        nuevo_nombre = nuevo_nombre.title()
+    # Validacion stock inicial
+    while True:
+        stock_texto = input("Ingrese stock inicial: ").strip()
+        if stock_texto.isdigit() and int(stock_texto) >= 0:
+            nuevo_stock = int(stock_texto)
+            break
+        print("Error: Ingrese un stock valido (entero mayor o igual a 0).")
 
-        precio_texto = input("Ingrese precio del producto: ")
-        while not precio_texto.replace(".", "", 1).isdigit() or float(precio_texto) <= 0:
-            print("Error: Ingrese un precio válido mayor a 0.")
-            precio_texto = input("Ingrese precio del producto: ")
-        nuevo_precio = float(precio_texto)
-
-        stock_texto = input("Ingrese stock inicial: ")
-        while not stock_texto.isdigit() or int(stock_texto) < 0:
-            print("Error: Ingrese un stock válido (entero mayor o igual a 0).")
-            stock_texto = input("Ingrese stock inicial: ")
-        nuevo_stock = int(stock_texto)
-        # ACTUALIZACIÓN 3:
-        # Solicitar confirmación antes de registrar el producto.
-        confirmar = input("¿Desea guardar el producto? (S/N): ").upper()
-
-        if confirmar == "S":
-
-          nombres.append(nuevo_nombre)
-          precios.append(nuevo_precio)
-          stock.append(nuevo_stock)
-
-          # ACTUALIZACIÓN 4:
-          # Mostrar un resumen de los datos registrados.
-          print("\n--- RESUMEN DEL PRODUCTO ---")
-          print("Nombre:", nuevo_nombre)
-          print("Precio: S/.", nuevo_precio)
-          print("Stock:", nuevo_stock)
-          # ACTUALIZACIÓN 5:
-          # Mostrar la cantidad total de productos registrados.
-          print("Total de productos registrados:", len(nombres))
-
-          # ACTUALIZACIÓN 6:
-          # Mostrar confirmación personalizada del producto agregado.
-          print(f"Producto '{nuevo_nombre}' agregado correctamente.")
-
-        else:
-            print("Operación cancelada.")
-    else:
-        print("Error: Capacidad máxima de almacén alcanzada.")
+    nombres.append(nuevo_nombre)
+    precios.append(nuevo_precio)
+    stock.append(nuevo_stock)
+    print("Registro valido: Producto agregado correctamente.")
 
 
-        
-
+# ============================================================
+# FUNCION 4: Generar reporte MEJORADO (RQ-07)
+# - Muestra ventas, total acumulado y fiados pendientes
+# - Guarda reporte en archivo reporte.txt
+# ============================================================
 def generar_reporte(h_ventas, h_montos, h_deudores):
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
 
-    # MEJORA 1: Valida que las listas tengan la misma cantidad de elementos
-    if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
-        print("Error: Las listas contienen diferentes cantidades de elementos.")
-        return
-    # MEJORA 2: Validar que los montos sean numéricos
-    for monto in h_montos:
-        if not isinstance(monto, (int, float)):
-            print("Error: Existe un monto no numérico.")
-            return
     if len(h_ventas) == 0:
-     print("No hay ventas registradas en el sistema.")
+        print("No hay ventas registradas en el sistema.")
+        return
 
-    # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
-    else:
-        total_vendido = 0
-        ventas_pagadas = 0
-        ventas_credito = 0
-        
-        for i in range(len(h_ventas)):
-            total_vendido += h_montos[i]
+    total_acumulado  = 0.0
+    total_fiados     = 0.0
+    cantidad_fiados  = 0
 
-            if h_deudores[i] == "Efectivo":
-                ventas_pagadas += 1
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: PAGADO (Efectivo)")
-            else:
-                ventas_credito += 1
-                
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
+    lineas_reporte = []
+    lineas_reporte.append("=== REPORTE DE VENTAS - SISTEMA BODEGA ===\n")
 
-        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
-        print("\n--- RESUMEN ---")
-        print("Total vendido: S/.", total_vendido)
-        print("Ventas pagadas:", ventas_pagadas)
-        print("Ventas por cobrar:", ventas_credito)
+    for i in range(len(h_ventas)):
+        if h_deudores[i] == "Efectivo":
+            linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"
+                     f" | Monto: S/. {h_montos[i]}"
+                     f" | Estado: PAGADO (Efectivo)")
+            total_acumulado += h_montos[i]
+        else:
+            linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"
+                     f" | Monto: S/. {h_montos[i]}"
+                     f" | Estado: POR COBRAR a [ {h_deudores[i]} ]")
+            total_fiados    += h_montos[i]
+            total_acumulado += h_montos[i]
+            cantidad_fiados += 1
 
- # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
-        promedio = total_vendido / len(h_ventas)
-        print("Promedio por venta: S/.", round(promedio, 2))
-        print("Reporte completado correctamente")
+        print(linea)
+        lineas_reporte.append(linea + "\n")
 
-        ranking = {}
-        for producto in h_ventas:
-            if producto in ranking:
-                ranking[producto] += 1
-            else:
-                ranking[producto] = 1
-    
-     # MEJORA 6: Mostrar el ranking de productos más vendidos
-        print("\n--- RANKING DE PRODUCTOS ---")
-        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
-            print(f"{producto}: {cantidad} unidades vendidas")
+    # Resumen final
+    resumen = (
+        f"\n--- RESUMEN DEL DIA ---\n"
+        f"Total de ventas realizadas : {len(h_ventas)}\n"
+        f"Ingresos en efectivo       : S/. {round(total_acumulado - total_fiados, 2)}\n"
+        f"Fiados pendientes de cobro : S/. {round(total_fiados, 2)} ({cantidad_fiados} clientes)\n"
+        f"TOTAL ACUMULADO DEL DIA    : S/. {round(total_acumulado, 2)}\n"
+    )
+    print(resumen)
+    lineas_reporte.append(resumen)
 
+    # Guardar reporte en archivo
+    try:
+        with open("reporte.txt", "w", encoding="utf-8") as f:
+            f.writelines(lineas_reporte)
+        print("Reporte guardado correctamente en 'reporte.txt'")
+    except Exception as e:
+        print("Advertencia: No se pudo guardar el reporte en archivo.", e)
 
+    print("Reporte correcto")
 
 
+# ============================================================
+# FUNCION 5: Salir MEJORADA (RQ-08)
+# - Pide confirmacion antes de salir
+# - Guarda inventario en archivo inventario.txt
+# ============================================================
+def salir(nombres, precios, stock):
+    print("\n--- SALIR DEL SISTEMA ---")
+
+    # Confirmacion antes de cerrar
+    confirmacion = ""
+    while confirmacion not in ["s", "n"]:
+        confirmacion = input("¿Esta seguro que desea salir? (S/N): ").strip().lower()
+        if confirmacion not in ["s", "n"]:
+            print("Error: Ingrese S para confirmar o N para cancelar.")
+
+    if confirmacion == "n":
+        print("Operacion cancelada. Regresando al menu...")
+        return False  # No salir
+
+    # Guardar inventario actual en archivo
+    try:
+        with open("inventario.txt", "w", encoding="utf-8") as f:
+            f.write("=== INVENTARIO FINAL DEL DIA ===\n")
+            for i in range(len(nombres)):
+                f.write(f"Producto: {nombres[i]} | Precio: S/. {precios[i]} | Stock: {stock[i]}\n")
+        print("Inventario guardado correctamente en 'inventario.txt'")
+    except Exception as e:
+        print("Advertencia: No se pudo guardar el inventario.", e)
+
+    print("Cierre correcto. Saliendo del sistema...")
+    return True  # Confirmar salida
 
 
+# ============================================================
+# FUNCION AUXILIAR: Guardar venta individual en archivo
+# ============================================================
+def guardar_venta_archivo(producto, monto, estado):
+    try:
+        with open("ventas.txt", "a", encoding="utf-8") as f:
+            f.write(f"Producto: {producto} | Monto: S/. {monto} | Estado: {estado}\n")
+    except Exception as e:
+        print("Advertencia: No se pudo registrar en archivo.", e)
 
 
-
-
-
- 
-
-
+# ============================================================
+# MENU PRINCIPAL
+# ============================================================
 def menu_principal():
     opcion = "0"
     while opcion != "5":
@@ -226,11 +284,11 @@ def menu_principal():
         print("3. Agregar producto")
         print("4. Generar reporte")
         print("5. Salir")
-        
-        opcion = input("Seleccione una opcion: ")
-        
+        opcion = input("Seleccione una opcion: ").strip()
+
         if opcion == "1":
-            registrar_venta(nombres_productos, precios_productos, stock_productos, historial_ventas, historial_montos, historial_deudores)
+            registrar_venta(nombres_productos, precios_productos, stock_productos,
+                            historial_ventas, historial_montos, historial_deudores)
         elif opcion == "2":
             ver_stock(nombres_productos, precios_productos, stock_productos)
         elif opcion == "3":
@@ -238,15 +296,12 @@ def menu_principal():
         elif opcion == "4":
             generar_reporte(historial_ventas, historial_montos, historial_deudores)
         elif opcion == "5":
-
-            print("Cierre correcto. Saliendo del sistema...")
+            cerrar = salir(nombres_productos, precios_productos, stock_productos)
+            if not cerrar:
+                opcion = "0"  # Cancelar salida, volver al menu
         else:
             print("Opcion no valida, intente de nuevo.")
 
-menu_principal()        
-             
 
-
-    
-             
-
+# --- PUNTO DE ENTRADA ---
+menu_principal()
