@@ -155,10 +155,11 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
         if not isinstance(monto, (int, float)):
             print("Error: Existe un monto no numérico.")
             return
-    if len(h_ventas) == 0:
-     print("No hay ventas registradas en el sistema.")
 
-    # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
+    if len(h_ventas) == 0:
+        print("No hay ventas registradas en el sistema.")
+
+# MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
     else:
         total_vendido = 0
         ventas_pagadas = 0
@@ -190,7 +191,7 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
  # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
         promedio = total_vendido / len(h_ventas)
         print("Promedio por venta: S/.", round(promedio, 2))
-        print("Reporte completado correctamente")
+        print("Reporte completado de forma correcta.")
 
         ranking = {}
         for producto in h_ventas:
