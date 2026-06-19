@@ -131,43 +131,156 @@ def ver_stock(nombres, precios, stock):
 # FUNCION 3: Agregar producto (RQ-05)
 # ============================================================
 def agregar_producto(nombres, precios, stock):
-    print("\n--- AGREGAR PRODUCTO ---")
+    print("\n--- GESTION DE PRODUCTOS ---")
+    print("1. Agregar nuevo producto")
+    print("2. Actualizar producto existente")
 
-    if len(nombres) >= 50:
-        print("Error: Capacidad maxima de almacen alcanzada.")
-        return
+    opcion = input("Seleccione una opcion: ").strip()
 
-    # Validacion nombre
-    nuevo_nombre = ""
-    while nuevo_nombre == "":
+    # ============================================================
+    # MEJORA GENERAL:
+    # Se convierte una sola funcion en un modulo de gestion
+    # permitiendo AGREGAR y ACTUALIZAR sin cambiar el menu principal
+    # ============================================================
+
+    # ============================================================
+    # OPCION 1: AGREGAR PRODUCTO (MEJORADO)
+    # ============================================================
+    if opcion == "1":
+
+        # MEJORA: control de capacidad
+        if len(nombres) >= 50:
+            print("Error: Capacidad maxima de almacen alcanzada.")
+            return
+
+        # MEJORA: limpieza de datos
         nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
-        if nuevo_nombre == "":
+
+        while nuevo_nombre == "":
             print("Error: El nombre no puede estar vacio.")
+            nuevo_nombre = input("Ingrese nombre del nuevo producto: ").strip()
 
-    # Validacion precio
-    while True:
-        precio_texto = input("Ingrese precio del producto: ").strip()
-        try:
-            nuevo_precio = float(precio_texto)
-            if nuevo_precio <= 0:
-                print("Error: Ingrese un precio valido mayor a 0.")
-            else:
+        # MEJORA: estandarizacion
+        nuevo_nombre = nuevo_nombre.title()
+
+        # MEJORA: evitar duplicados
+        for producto in nombres:
+            if producto.lower() == nuevo_nombre.lower():
+                print("Error: El producto ya existe en el inventario.")
+                return
+
+        # MEJORA: validacion de precio
+        while True:
+            try:
+                nuevo_precio = float(input("Ingrese precio del producto: "))
+                if nuevo_precio > 0:
+                    break
+                print("Error: El precio debe ser mayor a 0.")
+            except ValueError:
+                print("Error: Ingrese un numero valido.")
+
+        # MEJORA: validacion de stock
+        while True:
+            stock_texto = input("Ingrese stock inicial: ")
+            if stock_texto.isdigit() and int(stock_texto) >= 0:
+                nuevo_stock = int(stock_texto)
                 break
-        except ValueError:
-            print("Error: Ingrese un numero valido.")
+            print("Error: Ingrese un stock valido.")
 
-    # Validacion stock inicial
-    while True:
-        stock_texto = input("Ingrese stock inicial: ").strip()
-        if stock_texto.isdigit() and int(stock_texto) >= 0:
-            nuevo_stock = int(stock_texto)
-            break
-        print("Error: Ingrese un stock valido (entero mayor o igual a 0).")
+        # MEJORA: confirmacion
+        confirmar = input("¿Desea guardar el producto? (S/N): ").strip().upper()
 
-    nombres.append(nuevo_nombre)
-    precios.append(nuevo_precio)
-    stock.append(nuevo_stock)
-    print("Registro valido: Producto agregado correctamente.")
+        if confirmar == "S":
+
+            nombres.append(nuevo_nombre)
+            precios.append(nuevo_precio)
+            stock.append(nuevo_stock)
+
+            # MEJORA: resumen
+            print("\n--- RESUMEN DEL PRODUCTO ---")
+            print("Nombre:", nuevo_nombre)
+            print("Precio: S/.", nuevo_precio)
+            print("Stock:", nuevo_stock)
+
+            # MEJORA: contador
+            print("Total de productos registrados:", len(nombres))
+
+            # MEJORA: mensaje final
+            print(f"Producto '{nuevo_nombre}' agregado correctamente.")
+
+        else:
+            print("Operacion cancelada.")
+
+    # ============================================================
+    # OPCION 2: ACTUALIZAR PRODUCTO (NUEVA MEJORA)
+    # ============================================================
+    elif opcion == "2":
+
+        # MEJORA: validacion de entrada
+        producto = input("Ingrese nombre del producto a actualizar: ").strip()
+
+        while producto == "":
+            print("Error: El nombre no puede estar vacio.")
+            producto = input("Ingrese nombre del producto a actualizar: ").strip()
+
+        producto = producto.title()
+
+        # MEJORA: busqueda segura
+        indice = -1
+        for i in range(len(nombres)):
+            if nombres[i].lower() == producto.lower():
+                indice = i
+                break
+
+        # MEJORA: validacion existencia
+        if indice == -1:
+            print("Error: Producto no encontrado.")
+            return
+
+        print("\n--- PRODUCTO ENCONTRADO ---")
+        print("Nombre:", nombres[indice])
+        print("Precio actual: S/.", precios[indice])
+        print("Stock actual:", stock[indice])
+
+        # MEJORA: nuevo precio validado
+        while True:
+            try:
+                nuevo_precio = float(input("Ingrese nuevo precio: "))
+                if nuevo_precio > 0:
+                    break
+                print("Error: Precio invalido.")
+            except ValueError:
+                print("Error: Ingrese un numero valido.")
+
+        # MEJORA: nuevo stock validado
+        while True:
+            stock_texto = input("Ingrese nuevo stock: ")
+            if stock_texto.isdigit() and int(stock_texto) >= 0:
+                nuevo_stock = int(stock_texto)
+                break
+            print("Error: Stock invalido.")
+
+        # MEJORA: confirmacion
+        confirmar = input("¿Desea actualizar el producto? (S/N): ").strip().upper()
+
+        if confirmar == "S":
+
+            precios[indice] = nuevo_precio
+            stock[indice] = nuevo_stock
+
+            # MEJORA: resumen final
+            print("\n--- PRODUCTO ACTUALIZADO ---")
+            print("Nombre:", nombres[indice])
+            print("Nuevo precio: S/.", precios[indice])
+            print("Nuevo stock:", stock[indice])
+
+            print("Producto actualizado correctamente.")
+
+        else:
+            print("Actualizacion cancelada.")
+
+    else:
+        print("Opcion no valida.")
 
 
 # ============================================================
