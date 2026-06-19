@@ -1,0 +1,210 @@
+[1mdiff --cc VENTAS Y GESTION.py[m
+[1mindex a7c08bf,0e12317..0000000[m
+[1m--- a/VENTAS Y GESTION.py[m
+[1m+++ b/VENTAS Y GESTION.py[m
+[36m@@@ -122,7 -182,6 +182,10 @@@[m [mdef generar_reporte(h_ventas, h_montos[m
+      if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):[m
+          print("Error: Las listas contienen diferentes cantidades de elementos.")[m
+          return[m
+[32m++<<<<<<< HEAD[m
+[32m +    [m
+[32m++=======[m
+[32m++>>>>>>> f15ae75965929e991bbd0d3747a996efa57b98dc[m
+      # MEJORA 2: Validar que los montos sean numéricos[m
+      for monto in h_montos:[m
+          if not isinstance(monto, (int, float)):[m
+[36m@@@ -132,12 -191,182 +195,194 @@@[m
+      if len(h_ventas) == 0:[m
+          print("No hay ventas registradas en el sistema.")[m
+  [m
+[32m++<<<<<<< HEAD[m
+[32m +[m
+[32m +    else:[m
+[32m +        for i in range(len(h_ventas)):[m
+[32m +            if h_deudores[i] == "Efectivo":[m
+[32m +                print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: PAGADO (Efectivo)")[m
+[32m +            else:[m
+[32m +                print("Venta N", i + 1, " -> Producto:", h_ventas[i], " | Monto: S/.", h_montos[i], " | Estado: POR COBRAR a [", h_deudores[i], "]")[m
+[32m +        print("Reporte correcto")[m
+[32m +                [m
+[32m++=======[m
+[32m+ # MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar[m
+[32m+     else:[m
+[32m+         total_vendido = 0[m
+[32m+         ventas_pagadas = 0[m
+[32m+         ventas_credito = 0[m
+[32m+         [m
+[32m+         for i in range(len(h_ventas)):[m
+[32m+             total_vendido += h_montos[i][m
+[32m+ [m
+[32m+             if h_deudores[i] == "Efectivo":[m
+[32m+                 ventas_pagadas += 1[m
+[32m+                 print("Venta N", i + 1,[m
+[32m+                       " -> Producto:", h_ventas[i],[m
+[32m+                       " | Monto: S/.", h_montos[i],[m
+[32m+                       " | Estado: PAGADO (Efectivo)")[m
+[32m+             else:[m
+[32m+                 ventas_credito += 1[m
+[32m+                 [m
+[32m+                 print("Venta N", i + 1,[m
+[32m+                       " -> Producto:", h_ventas[i],[m
+[32m+                       " | Monto: S/.", h_montos[i],[m
+[32m+                       " | Estado: POR COBRAR a [", h_deudores[i], "]")[m
+[32m+ [m
+[32m+         # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas[m
+[32m+         print("\n--- RESUMEN ---")[m
+[32m+         print("Total vendido: S/.", total_vendido)[m
+[32m+         print("Ventas pagadas:", ventas_pagadas)[m
+[32m+         print("Ventas por cobrar:", ventas_credito)[m
+[32m+ [m
+[32m+  # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción[m
+[32m+         promedio = total_vendido / len(h_ventas)[m
+[32m+         print("Promedio por venta: S/.", round(promedio, 2))[m
+[32m+         print("Reporte completado de forma correcta.")[m
+[32m+ [m
+[32m+         ranking = {}[m
+[32m+         for producto in h_ventas:[m
+[32m+             if producto in ranking:[m
+[32m+                 ranking[producto] += 1[m
+[32m+             else:[m
+[32m+                 ranking[producto] = 1[m
+[32m+     [m
+[32m+      # MEJORA 6: Mostrar el ranking de productos más vendidos[m
+[32m+         print("\n--- RANKING DE PRODUCTOS ---")[m
+[32m+         for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):[m
+[32m+             print(f"{producto}: {cantidad} unidades vendidas")[m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+ [m
+[32m+     total_acumulado  = 0.0[m
+[32m+     total_fiados     = 0.0[m
+[32m+     cantidad_fiados  = 0[m
+[32m+ [m
+[32m+     lineas_reporte = [][m
+[32m+     lineas_reporte.append("=== REPORTE DE VENTAS - SISTEMA BODEGA ===\n")[m
+[32m+ [m
+[32m+     for i in range(len(h_ventas)):[m
+[32m+         if h_deudores[i] == "Efectivo":[m
+[32m+             linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"[m
+[32m+                      f" | Monto: S/. {h_montos[i]}"[m
+[32m+                      f" | Estado: PAGADO (Efectivo)")[m
+[32m+             total_acumulado += h_montos[i][m
+[32m+         else:[m
+[32m+             linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"[m
+[32m+                      f" | Monto: S/. {h_montos[i]}"[m
+[32m+                      f" | Estado: POR COBRAR a [ {h_deudores[i]} ]")[m
+[32m+             total_fiados    += h_montos[i][m
+[32m+             total_acumulado += h_montos[i][m
+[32m+             cantidad_fiados += 1[m
+[32m+ [m
+[32m+         print(linea)[m
+[32m+         lineas_reporte.append(linea + "\n")[m
+[32m+ [m
+[32m+     # Resumen final[m
+[32m+     resumen = ([m
+[32m+         f"\n--- RESUMEN DEL DIA ---\n"[m
+[32m+         f"Total de ventas realizadas : {len(h_ventas)}\n"[m
+[32m+         f"Ingresos en efectivo       : S/. {round(total_acumulado - total_fiados, 2)}\n"[m
+[32m+         f"Fiados pendientes de cobro : S/. {round(total_fiados, 2)} ({cantidad_fiados} clientes)\n"[m
+[32m+         f"TOTAL ACUMULADO DEL DIA    : S/. {round(total_acumulado, 2)}\n"[m
+[32m+     )[m
+[32m+     print(resumen)[m
+[32m+     lineas_reporte.append(resumen)[m
+[32m+ [m
+[32m+     # Guardar reporte en archivo[m
+[32m+     try:[m
+[32m+         with open("reporte.txt", "w", encoding="utf-8") as f:[m
+[32m+             f.writelines(lineas_reporte)[m
+[32m+         print("Reporte guardado correctamente en 'reporte.txt'")[m
+[32m+     except Exception as e:[m
+[32m+         print("Advertencia: No se pudo guardar el reporte en archivo.", e)[m
+[32m+ [m
+[32m+     print("Reporte correcto")[m
+[32m+ [m
+[32m+ [m
+[32m+ # ============================================================[m
+[32m+ # FUNCION 5: Salir MEJORADA (RQ-08)[m
+[32m+ # - Pide confirmacion antes de salir[m
+[32m+ # - Guarda inventario en archivo inventario.txt[m
+[32m+ # ============================================================[m
+[32m+ def salir(nombres, precios, stock):[m
+[32m+     print("\n--- SALIR DEL SISTEMA ---")[m
+[32m+ [m
+[32m+     # Confirmacion antes de cerrar[m
+[32m+     confirmacion = ""[m
+[32m+     while confirmacion not in ["s", "n"]:[m
+[32m+         confirmacion = input("¿Esta seguro que desea salir? (S/N): ").strip().lower()[m
+[32m+         if confirmacion not in ["s", "n"]:[m
+[32m+             print("Error: Ingrese S para confirmar o N para cancelar.")[m
+[32m+ [m
+[32m+     if confirmacion == "n":[m
+[32m+         print("Operacion cancelada. Regresando al menu...")[m
+[32m+         return False  # No salir[m
+[32m+ [m
+[32m+     # Guardar inventario actual en archivo[m
+[32m+     try:[m
+[32m+         with open("inventario.txt", "w", encoding="utf-8") as f:[m
+[32m+             f.write("=== INVENTARIO FINAL DEL DIA ===\n")[m
+[32m+             for i in range(len(nombres)):[m
+[32m+                 f.write(f"Producto: {nombres[i]} | Precio: S/. {precios[i]} | Stock: {stock[i]}\n")[m
+[32m+         print("Inventario guardado correctamente en 'inventario.txt'")[m
+[32m+     except Exception as e:[m
+[32m+         print("Advertencia: No se pudo guardar el inventario.", e)[m
+[32m+ [m
+[32m+     print("Cierre correcto. Saliendo del sistema...")[m
+[32m+     return True  # Confirmar salida[m
+[32m+ [m
+[32m+ [m
+[32m+ # ============================================================[m
+[32m+ # FUNCION AUXILIAR: Guardar venta individual en archivo[m
+[32m+ # ============================================================[m
+[32m+ def guardar_venta_archivo(producto, monto, estado):[m
+[32m+     try:[m
+[32m+         with open("ventas.txt", "a", encoding="utf-8") as f:[m
+[32m+             f.write(f"Producto: {producto} | Monto: S/. {monto} | Estado: {estado}\n")[m
+[32m+     except Exception as e:[m
+[32m+         print("Advertencia: No se pudo registrar en archivo.", e)[m
+[32m+ [m
+[32m+ [m
+[32m+ # ============================================================[m
+[32m+ # MENU PRINCIPAL[m
+[32m+ # ============================================================[m
+[32m+ def menu_principal():[m
+[32m+     opcion = "0"[m
+[32m+     while opcion != "5":[m
+[32m+         print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")[m
+[32m+         print("1. Registrar venta")[m
+[32m+         print("2. Ver stock")[m
+[32m+         print("3. Agregar producto")[m
+[32m+         print("4. Generar reporte")[m
+[32m+         print("5. Salir")[m
+[32m+         opcion = input("Seleccione una opcion: ").strip()[m
+[32m+ [m
+[32m+         if opcion == "1":[m
+[32m+             registrar_venta(nombres_productos, precios_productos, stock_productos,[m
+[32m+                             historial_ventas, historial_montos, historial_deudores)[m
+[32m+         elif opcion == "2":[m
+[32m+             ver_stock(nombres_productos, precios_productos, stock_productos)[m
+[32m+         elif opcion == "3":[m
+[32m+             agregar_producto(nombres_productos, precios_productos, stock_productos)[m
+[32m+         elif opcion == "4":[m
+[32m+             generar_reporte(historial_ventas, historial_montos, historial_deudores)[m
+[32m+         elif opcion == "5":[m
+[32m+             cerrar = salir(nombres_productos, precios_productos, stock_productos)[m
+[32m+             if not cerrar:[m
+[32m+                 opcion = "0"  # Cancelar salida, volver al menu[m
+[32m+         else:[m
+[32m+             print("Opcion no valida, intente de nuevo.")[m
+[32m+ [m
+[32m+ [m
+[32m+ # --- PUNTO DE ENTRADA ---[m
+[32m+ menu_principal()[m
+[32m++>>>>>>> f15ae75965929e991bbd0d3747a996efa57b98dc[m
