@@ -178,10 +178,11 @@ def agregar_producto(nombres, precios, stock):
 def generar_reporte(h_ventas, h_montos, h_deudores):
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
 
-    # MEJORA 1: Valida que las listas tengan la misma cantidad de elementos
+    # MEJORA 1: Validar que las listas tengan la misma cantidad de elementos
     if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
         print("Error: Las listas contienen diferentes cantidades de elementos.")
         return
+
     # MEJORA 2: Validar que los montos sean numéricos
     for monto in h_montos:
         if not isinstance(monto, (int, float)):
@@ -190,107 +191,95 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
 
     if len(h_ventas) == 0:
         print("No hay ventas registradas en el sistema.")
+        return
 
-# MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
-    else:
-        total_vendido = 0
-        ventas_pagadas = 0
-        ventas_credito = 0
-        
-        for i in range(len(h_ventas)):
-            total_vendido += h_montos[i]
+    total_vendido = 0
+    ventas_pagadas = 0
+    ventas_credito = 0
 
-            if h_deudores[i] == "Efectivo":
-                ventas_pagadas += 1
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: PAGADO (Efectivo)")
-            else:
-                ventas_credito += 1
-                
-                print("Venta N", i + 1,
-                      " -> Producto:", h_ventas[i],
-                      " | Monto: S/.", h_montos[i],
-                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
-
-        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
-        print("\n--- RESUMEN ---")
-        print("Total vendido: S/.", total_vendido)
-        print("Ventas pagadas:", ventas_pagadas)
-        print("Ventas por cobrar:", ventas_credito)
-
- # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
-        promedio = total_vendido / len(h_ventas)
-        print("Promedio por venta: S/.", round(promedio, 2))
-        print("Reporte completado de forma correcta.")
-
-        ranking = {}
-        for producto in h_ventas:
-            if producto in ranking:
-                ranking[producto] += 1
-            else:
-                ranking[producto] = 1
-    
-     # MEJORA 6: Mostrar el ranking de productos más vendidos
-        print("\n--- RANKING DE PRODUCTOS ---")
-        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
-            print(f"{producto}: {cantidad} unidades vendidas")
-
-
-
-
-
-
-
-
-
-
-
-    total_acumulado  = 0.0
-    total_fiados     = 0.0
-    cantidad_fiados  = 0
-
+    # Lista para guardar el reporte en archivo
     lineas_reporte = []
-    lineas_reporte.append("=== REPORTE DE VENTAS - SISTEMA BODEGA ===\n")
+    lineas_reporte.append("=== REPORTE DE VENTAS ===\n\n")
 
+    # MEJORA 3: Mostrar detalle de ventas
     for i in range(len(h_ventas)):
+        total_vendido += h_montos[i]
+
         if h_deudores[i] == "Efectivo":
-            linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"
-                     f" | Monto: S/. {h_montos[i]}"
-                     f" | Estado: PAGADO (Efectivo)")
-            total_acumulado += h_montos[i]
+            ventas_pagadas += 1
+
+            linea = (
+                f"Venta N {i+1} -> Producto: {h_ventas[i]}"
+                f" | Monto: S/. {h_montos[i]}"
+                f" | Estado: PAGADO (Efectivo)"
+            )
+
         else:
-            linea = (f"Venta N {i+1} -> Producto: {h_ventas[i]}"
-                     f" | Monto: S/. {h_montos[i]}"
-                     f" | Estado: POR COBRAR a [ {h_deudores[i]} ]")
-            total_fiados    += h_montos[i]
-            total_acumulado += h_montos[i]
-            cantidad_fiados += 1
+            ventas_credito += 1
+
+            linea = (
+                f"Venta N {i+1} -> Producto: {h_ventas[i]}"
+                f" | Monto: S/. {h_montos[i]}"
+                f" | Estado: POR COBRAR a [{h_deudores[i]}]"
+            )
 
         print(linea)
         lineas_reporte.append(linea + "\n")
 
-    # Resumen final
-    resumen = (
-        f"\n--- RESUMEN DEL DIA ---\n"
-        f"Total de ventas realizadas : {len(h_ventas)}\n"
-        f"Ingresos en efectivo       : S/. {round(total_acumulado - total_fiados, 2)}\n"
-        f"Fiados pendientes de cobro : S/. {round(total_fiados, 2)} ({cantidad_fiados} clientes)\n"
-        f"TOTAL ACUMULADO DEL DIA    : S/. {round(total_acumulado, 2)}\n"
+    # MEJORA 4: Resumen del reporte
+    print("\n--- RESUMEN ---")
+    print("Total vendido: S/.", total_vendido)
+    print("Ventas pagadas:", ventas_pagadas)
+    print("Ventas por cobrar:", ventas_credito)
+
+    lineas_reporte.append("\n--- RESUMEN ---\n")
+    lineas_reporte.append(f"Total vendido: S/. {total_vendido}\n")
+    lineas_reporte.append(f"Ventas pagadas: {ventas_pagadas}\n")
+    lineas_reporte.append(f"Ventas por cobrar: {ventas_credito}\n")
+
+    # MEJORA 5: Promedio por venta
+    promedio = total_vendido / len(h_ventas)
+
+    print("Promedio por venta: S/.", round(promedio, 2))
+
+    lineas_reporte.append(
+        f"Promedio por venta: S/. {round(promedio, 2)}\n"
     )
-    print(resumen)
-    lineas_reporte.append(resumen)
 
-    # Guardar reporte en archivo
+    # MEJORA 6: Ranking de productos más vendidos
+    ranking = {}
+
+    for producto in h_ventas:
+        if producto in ranking:
+            ranking[producto] += 1
+        else:
+            ranking[producto] = 1
+
+    print("\n--- RANKING DE PRODUCTOS ---")
+
+    lineas_reporte.append("\n--- RANKING DE PRODUCTOS ---\n")
+
+    for producto, cantidad in sorted(ranking.items(),
+                key=lambda x: x[1],
+                  reverse=True):
+
+        print(f"{producto}: {cantidad} unidades vendidas")
+
+        lineas_reporte.append(
+            f"{producto}: {cantidad} unidades vendidas\n"
+        )
+
+    # MEJORA 7: Guardar reporte en archivo
     try:
-        with open("reporte.txt", "w", encoding="utf-8") as f:
-            f.writelines(lineas_reporte)
-        print("Reporte guardado correctamente en 'reporte.txt'")
-    except Exception as e:
-        print("Advertencia: No se pudo guardar el reporte en archivo.", e)
+        with open("reporte.txt", "w", encoding="utf-8") as archivo:
+            archivo.writelines(lineas_reporte)
 
-    print("Reporte correcto")
+        print("\nReporte guardado correctamente en 'reporte.txt'")
+
+    except Exception as e:
+        print("\nNo se pudo guardar el reporte:", e)
+
+    print("Reporte completado correctamente.")
 
 
 # ============================================================
