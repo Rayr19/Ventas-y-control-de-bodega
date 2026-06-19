@@ -178,9 +178,74 @@ def agregar_producto(nombres, precios, stock):
 def generar_reporte(h_ventas, h_montos, h_deudores):
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
 
+    # MEJORA 1: Valida que las listas tengan la misma cantidad de elementos
+    if len(h_ventas) != len(h_montos) or len(h_ventas) != len(h_deudores):
+        print("Error: Las listas contienen diferentes cantidades de elementos.")
+        return
+    # MEJORA 2: Validar que los montos sean numéricos
+    for monto in h_montos:
+        if not isinstance(monto, (int, float)):
+            print("Error: Existe un monto no numérico.")
+            return
+
     if len(h_ventas) == 0:
         print("No hay ventas registradas en el sistema.")
-        return
+
+# MEJORA 3: Mostrar un resumen de ventas y cuentas por cobrar
+    else:
+        total_vendido = 0
+        ventas_pagadas = 0
+        ventas_credito = 0
+        
+        for i in range(len(h_ventas)):
+            total_vendido += h_montos[i]
+
+            if h_deudores[i] == "Efectivo":
+                ventas_pagadas += 1
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: PAGADO (Efectivo)")
+            else:
+                ventas_credito += 1
+                
+                print("Venta N", i + 1,
+                      " -> Producto:", h_ventas[i],
+                      " | Monto: S/.", h_montos[i],
+                      " | Estado: POR COBRAR a [", h_deudores[i], "]")
+
+        # MEJORA 4 : Agregar un resumen al final del reporte con totales y estadísticas
+        print("\n--- RESUMEN ---")
+        print("Total vendido: S/.", total_vendido)
+        print("Ventas pagadas:", ventas_pagadas)
+        print("Ventas por cobrar:", ventas_credito)
+
+ # MEJORA 5: Calcular y mostrar el promedio de ventas por transacción
+        promedio = total_vendido / len(h_ventas)
+        print("Promedio por venta: S/.", round(promedio, 2))
+        print("Reporte completado de forma correcta.")
+
+        ranking = {}
+        for producto in h_ventas:
+            if producto in ranking:
+                ranking[producto] += 1
+            else:
+                ranking[producto] = 1
+    
+     # MEJORA 6: Mostrar el ranking de productos más vendidos
+        print("\n--- RANKING DE PRODUCTOS ---")
+        for producto, cantidad in sorted(ranking.items(), key=lambda x: x[1], reverse=True):
+            print(f"{producto}: {cantidad} unidades vendidas")
+
+
+
+
+
+
+
+
+
+
 
     total_acumulado  = 0.0
     total_fiados     = 0.0
