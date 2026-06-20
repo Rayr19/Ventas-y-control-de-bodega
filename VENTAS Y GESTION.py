@@ -312,7 +312,7 @@ def salir(nombres, precios, stock):
         print("Advertencia: No se pudo guardar el inventario.", e)
 
     print("Cierre correcto. Saliendo del sistema...")
-    return True  # Confirmar salida
+    return True  # Confirmar salida.
 
 
 # ============================================================
