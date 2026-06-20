@@ -2,7 +2,7 @@
 # SISTEMA DE VENTAS Y GESTION DE BODEGA
 # Curso: Fundamentos de Programacion - CIIN1205P
 # ============================================================
-
+import csv
 import os
 
 # --- DATOS INICIALES DEL INVENTARIO ---
@@ -173,7 +173,7 @@ def agregar_producto(nombres, precios, stock):
 # ============================================================
 # FUNCION 4: Generar reporte MEJORADO (RQ-07)
 # - Muestra ventas, total acumulado y fiados pendientes
-# - Guarda reporte en archivo reporte.txt
+# - Guarda reporte en archivo reporte.csv
 # ============================================================
 def generar_reporte(h_ventas, h_montos, h_deudores):
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
@@ -271,22 +271,46 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
 
     # MEJORA 7: Guardar reporte en archivo
     try:
-        with open("reporte.txt", "w", encoding="utf-8") as archivo:
-            archivo.writelines(lineas_reporte)
+        with open("reporte.csv", "w", newline="", encoding="utf-8") as archivo:
+            writer = csv.writer(archivo)
 
-        print("\nReporte guardado correctamente en 'reporte.txt'")
+            # Encabezados
+            writer.writerow(["N° Venta", "Producto", "Monto", "Estado"])
 
+            # Estructuras paralelas
+            for i in range(len(h_ventas)):
+
+                if h_deudores[i] == "Efectivo":
+                    estado = "PAGADO"
+                else:
+                    estado = "POR COBRAR"
+
+                writer.writerow([
+                    i + 1,
+                    h_ventas[i],
+                    h_montos[i],
+                    estado
+                ])
+
+            # Resumen
+            writer.writerow([])
+            writer.writerow(["RESUMEN"])
+            writer.writerow(["Total vendido", total_vendido])
+            writer.writerow(["Ventas pagadas", ventas_pagadas])
+            writer.writerow(["Ventas por cobrar", ventas_credito])
+            writer.writerow(["Promedio por venta", round(promedio, 2)])
+
+        print("\nReporte guardado correctamente en 'reporte.csv'")
     except Exception as e:
         print("\nNo se pudo guardar el reporte:", e)
-
-    print("Reporte completado correctamente.")
 
 
 # ============================================================
 # FUNCION 5: Salir MEJORADA (RQ-08)
 # - Pide confirmacion antes de salir
-# - Guarda inventario en archivo inventario.txt
+# - Guarda inventario en archivo inventario.csv
 # ============================================================
+
 def salir(nombres, precios, stock):
     print("\n--- SALIR DEL SISTEMA ---")
 
@@ -299,31 +323,52 @@ def salir(nombres, precios, stock):
 
     if confirmacion == "n":
         print("Operacion cancelada. Regresando al menu...")
-        return False  # No salir
+        return False
 
-    # Guardar inventario actual en archivo
+    # Guardar inventario en CSV
     try:
-        with open("inventario.txt", "w", encoding="utf-8") as f:
-            f.write("=== INVENTARIO FINAL DEL DIA ===\n")
+        with open("inventario.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+
+            # Encabezados
+            writer.writerow(["Producto", "Precio", "Stock"])
+
+            # Estructuras paralelas
             for i in range(len(nombres)):
-                f.write(f"Producto: {nombres[i]} | Precio: S/. {precios[i]} | Stock: {stock[i]}\n")
-        print("Inventario guardado correctamente en 'inventario.txt'")
+                writer.writerow([
+                    nombres[i],
+                    precios[i],
+                    stock[i]
+                ])
+
+        print("Inventario guardado correctamente en 'inventario.csv'")
+
     except Exception as e:
         print("Advertencia: No se pudo guardar el inventario.", e)
 
     print("Cierre correcto. Saliendo del sistema...")
-    return True  # Confirmar salida.
-
+    return True
 
 # ============================================================
 # FUNCION AUXILIAR: Guardar venta individual en archivo
 # ============================================================
+
 def guardar_venta_archivo(producto, monto, estado):
     try:
-        with open("ventas.txt", "a", encoding="utf-8") as f:
-            f.write(f"Producto: {producto} | Monto: S/. {monto} | Estado: {estado}\n")
+        archivo_existe = os.path.exists("ventas.csv")
+
+        with open("ventas.csv", "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+
+            if not archivo_existe:
+                writer.writerow(["Producto", "Monto", "Estado"])
+
+            writer.writerow([producto, monto, estado])
+
     except Exception as e:
-        print("Advertencia: No se pudo registrar en archivo.", e)
+        print("Advertencia:", e)
+        
+
 
 
 # ============================================================
