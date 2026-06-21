@@ -1,0 +1,12 @@
+N° Venta,Producto,Monto,Estado
+1,Arroz,4.5,PAGADO
+2,Arroz,4.5,POR COBRAR
+3,Arroz,9.0,PAGADO
+4,Azucar,25.0,PAGADO
+5,Leche,20.0,PAGADO
+
+RESUMEN
+Total vendido,63.0
+Ventas pagadas,4
+Ventas por cobrar,1
+Promedio por venta,12.6
