@@ -289,6 +289,29 @@ def agregar_producto(nombres, precios, stock):
 # - Guarda reporte en archivo reporte.csv
 # ============================================================
 def generar_reporte(h_ventas, h_montos, h_deudores):
+
+    #Ruben - Cargar historial de ventas desde archivo 
+    if os.path.exists("ventas.csv"):
+        try:
+            with open("ventas.csv", "r", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                next(reader) 
+                
+                
+                h_ventas.clear()
+                h_montos.clear()
+                h_deudores.clear()
+                
+                for fila in reader:
+                    if fila:
+                        h_ventas.append(fila[0])
+                        h_montos.append(float(fila[1]))
+                        h_deudores.append(fila[2])
+        except Exception as e:
+            print(f"Error al leer el historial: {e}")
+
+  #-----------------------------------------------------------
+
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
 
     # MEJORA 1: Validar que las listas tengan la misma cantidad de elementos
@@ -488,6 +511,8 @@ def guardar_venta_archivo(producto, monto, estado):
 # MENU PRINCIPAL
 # ============================================================
 def menu_principal():
+    cargar_inventario()  # Cargar inventario al iniciar el programa(Ruben)
+    cargar_ventas()  # Cargar historial de ventas al iniciar el programa(Ruben)
     opcion = "0"
     while opcion != "5":
         print("\n=== SISTEMA DE VENTAS DE LA BODEGA ===")
@@ -513,6 +538,54 @@ def menu_principal():
                 opcion = "0"  # Cancelar salida, volver al menu
         else:
             print("Opcion no valida, intente de nuevo.")
+
+#Ruben
+
+def cargar_inventario():
+    if os.path.exists("inventario.csv"):
+        try:
+            with open("inventario.csv", "r", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                next(reader)  
+                
+                
+                nombres_productos.clear()
+                precios_productos.clear()
+                stock_productos.clear()
+                
+              
+                for fila in reader:
+                    if fila:  
+                        nombres_productos.append(fila[0])
+                        precios_productos.append(float(fila[1]))
+                        stock_productos.append(int(fila[2]))
+            print("Inventario cargado exitosamente desde 'inventario.csv'.")
+        except Exception as e:
+            print(f"Error al cargar el inventario: {e}")
+    else:
+        print("No se encontró archivo de inventario previo. Iniciando con valores predeterminados.")
+
+def cargar_ventas():
+    if os.path.exists("ventas.csv"):
+        try:
+            with open("ventas.csv", "r", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                next(reader) 
+                
+                
+                historial_ventas.clear()
+                historial_montos.clear()
+                historial_deudores.clear()
+                
+                for fila in reader:
+                    if fila:
+                        historial_ventas.append(fila[0])
+                        historial_montos.append(float(fila[1]))
+                        historial_deudores.append(fila[2])
+            print("Historial de ventas y deudas cargado correctamente.")
+        except Exception as e:
+            print(f"Error al cargar historial: {e}")
+
 
 
 # --- PUNTO DE ENTRADA ---
