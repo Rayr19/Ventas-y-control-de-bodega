@@ -100,7 +100,7 @@ def ver_stock(nombres, precios, stock):
 # ============================================================
 # FUNCION 3: Agregar producto (RQ-05)
 # ============================================================
-def agregar_producto(nombres, precios, stock):
+def agregar_producto(nombres, precios, stock, secciones):
     print("\n--- GESTION DE PRODUCTOS ---")
     print("1. Agregar nuevo producto")
     print("2. Actualizar producto existente")
@@ -156,6 +156,7 @@ def agregar_producto(nombres, precios, stock):
                 nuevo_stock = int(stock_texto)
                 break
             print("Error: Ingrese un stock valido.")
+        nueva_seccion = input("Ingrese la sección del producto: ").strip().title()
 
         # MEJORA: confirmacion
         confirmar = input("¿Desea guardar el producto? (S/N): ").strip().upper()
@@ -165,6 +166,7 @@ def agregar_producto(nombres, precios, stock):
             nombres.append(nuevo_nombre)
             precios.append(nuevo_precio)
             stock.append(nuevo_stock)
+            secciones.append(nueva_seccion)
 
             # MEJORA: resumen
             print("\n--- RESUMEN DEL PRODUCTO ---")
@@ -491,7 +493,7 @@ def menu_principal():
         elif opcion == "2":
             ver_stock(nombres_productos, precios_productos, stock_productos)
         elif opcion == "3":
-            agregar_producto(nombres_productos, precios_productos, stock_productos)
+            agregar_producto(nombres_productos, precios_productos, stock_productos, secciones_productos)
         elif opcion == "4":
             generar_reporte(historial_ventas, historial_montos, historial_deudores)
         elif opcion == "5":
@@ -599,3 +601,6 @@ def guardar_historial_ventas(h_ventas, h_montos, h_deudores):
 
 # --- PUNTO DE ENTRADA ---
 menu_principal()
+
+
+
