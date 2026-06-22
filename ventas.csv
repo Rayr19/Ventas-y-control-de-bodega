@@ -1,10 +1,6 @@
-Producto,Monto,Estado
-
-
-Arroz,4.5,Efectivo
-Arroz,4.5,Cliente X
-Arroz,9.0,Efectivo
-Azucar,25.0,Efectivo
-Leche,20.0,Efectivo
-Arroz,4.5,ramos
-Leche,40.0,Efectivo
+Producto;Monto;Estado
+Yogurt Gloria 170g;2.5;cliente B
+Yogurt Gloria 170g;2.5;cliente z
+Yogurt Gloria 170g;2.5;Efectivo
+Yogurt Gloria 170g;2.5;Efectivo
+Leche Chocolatada;2.0;Efectivo
