@@ -1,4 +1,50 @@
-Producto,Precio,Stock
-Arroz,4.5,9
-Azucar,5.0,20
-Leche,4.0,15
+Producto;Precio;Stock;Seccion
+Yogurt Gloria 170g;2.5;48;Lacteos
+Leche Chocolatada;2.0;39;Lacteos
+Pan con Pollo;3.5;20;Desayunos
+Pan con hamburguesa;3.0;25;Desayunos
+Jugo frugos 200ml;1.5;60;Bebidas
+Agua Cielo 625ml;1.5;40;Bebidas
+Gatorade 500ml;3.5;25;Bebidas
+Gaseosa Coca Cola 500ml;2.5;50;Bebidas
+Gaseosa KR 500ml;1.5;40;Bebidas
+Galleta Casino Menta;1.5;30;Snacks
+Galleta Casino Fresa;1.5;70;Snacks
+Galleta Oreo;1.5;60;Snacks
+Galleta Coronita;1.0;80;Snacks
+Piqueos Snax;2.0;50;Snacks
+Doritos grande;2.5;40;Snacks
+Lay's Clasicas;2.5;40;Snacks
+Chizitos;1.5;60;Snacks
+Inca Kola galleta;1.0;50;Snacks
+Sublime clasico;1.5;100;Dulces
+Princesa;1.5;100;Dulces
+Triangulo;1.0;80;Dulces
+Chicle Bubbaloo;0.5;200;Dulces
+Morochas;1.5;50;Dulces
+Caramelo acido;0.2;300;Dulces
+Cuaderno A4 100h;5.0;20;Utiles
+Lapicero Faber Castell;1.0;100;Utiles
+Borrador blanco;0.5;50;Utiles
+Tajador metalico;1.0;30;Utiles
+Regla 30cm;1.5;20;Utiles
+Corrector liquido;3.0;25;Utiles
+Plumones gruesos;6.0;15;Utiles
+Folder manila;0.5;100;Utiles
+Papel Bond (10 hojas);1.0;100;Utiles
+Goma en barra;2.5;20;Utiles
+Cinta Scotch;2.0;15;Utiles
+Sobre manila A4;0.5;50;Utiles
+Post-its;3.5;10;Utiles
+Lapiz 2B;0.8;80;Utiles
+Resaltador;2.5;25;Utiles
+Cepillo dental;4.0;10;Higiene
+Panitos humedos;3.0;20;Higiene
+Alcohol en gel;4.0;20;Higiene
+Jabon liquido manos;5.0;15;Higiene
+Servilletas (pack);2.0;30;Higiene
+Toalla higienica;1.5;40;Higiene
+Curitas (unidad);0.5;50;Higiene
+Mentholatum (o similar);3.5;10;Higiene
+Algodon;2.0;20;Higiene
+Agua oxigenada;3.0;10;Higiene

@@ -9,7 +9,7 @@ import os
 nombres_productos = ["Arroz", "Azucar", "Leche"]
 precios_productos = [4.5, 5.0, 4.0]
 stock_productos   = [30, 20, 15]
-
+secciones_productos = [] #Ruben - Nueva mejora, agregar seccion a cada producto para mejor organizacion y consulta
 # --- HISTORIAL DE VENTAS ---
 historial_ventas   = []
 historial_montos   = []
@@ -19,98 +19,68 @@ historial_deudores = []
 # ============================================================
 # FUNCION 1: Registrar venta (RQ-01, RQ-02, RQ-03, RQ-06)
 # ============================================================
-def registrar_venta(nombres, precios, stock, h_ventas, h_montos, h_deudores):
-    print("\n--- REGISTRAR NUEVA VENTA ---")
+def registrar_venta(nombres, precios, stock, secciones, h_ventas, h_montos, h_deudores):
 
-    # Validacion: limite de 50 ventas
-    if len(h_ventas) >= 50:
-        print("Error: Se ha alcanzado el limite de 50 ventas.")
+    #Ruben - Nueva mejora , mostrar como catalogo al registrar venta para facilitar seleccion y evitar errores de tipeo
+    print("\n" + "="*80)
+    print("                REGISTRAR NUEVA VENTA - SELECCIONE PRODUCTO")
+    print("="*80)
+    
+    # para poder imprimir el Formato en tabla
+    if not nombres:
+        print("No hay productos disponibles.")
         return
 
-    # Validacion: nombre del producto no vacio
-    producto = ""
-    while producto == "":
-        producto = input("Ingrese nombre del producto: ").strip()
-        if producto == "":
-            print("Error: El nombre no puede estar vacio.")
-
-    # Buscar producto en inventario
-    indice = -1
+    print(f"{'#':<3} | {'PRODUCTO':<25} | {'PRECIO':<8} | {'STOCK':<6} | {'SECCIÓN'}")
+    print("-" * 80)
     for i in range(len(nombres)):
-        if nombres[i].lower() == producto.lower():
-            indice = i
+        print(f"{i + 1:<3} | {nombres[i]:<25} | S/. {precios[i]:<5} | {stock[i]:<6} | {secciones[i]}")
+    print("-" * 80)
 
-    if indice == -1:
-        print("Error: El producto no existe en el inventario.")
+    # para poder seleccionar el producto por numero y evitar errores de tipeo.
+    try:
+        seleccion = int(input("\nIngrese el número del producto a vender: ")) - 1
+        if seleccion < 0 or seleccion >= len(nombres):
+            print("Error: Producto no encontrado.")
+            return
+    except ValueError:
+        print("Error: Ingrese un número válido.")
         return
 
-    # Validacion: cantidad entera mayor a 0
-    cantidad_texto = ""
-    while True:
-        cantidad_texto = input("Ingrese cantidad: ").strip()
-        if cantidad_texto.isdigit() and int(cantidad_texto) > 0:
-            break
-        print("Error: Debe ingresar un numero entero mayor a 0.")
-    cantidad = int(cantidad_texto)
+    # para validar la cantida y el stock disponible
+    try:
+        cantidad = int(input(f"Cantidad de {nombres[seleccion]}: "))
+        if cantidad <= 0 or cantidad > stock[seleccion]:
+            print("Error: Cantidad no válida o sin stock suficiente.")
+            return
 
-    # Verificar stock suficiente
-    if stock[indice] < cantidad:
-        print("Error: No hay suficiente stock. Stock disponible:", stock[indice])
-        return
+        #para calcular el total a pagar
+        total = precios[seleccion] * cantidad
+        print(f"\nTotal a pagar: S/. {total:.2f}")
 
-    total = precios[indice] * cantidad
-    print("Total de la venta: S/.", round(total, 2))
+        # para seleccionar el tipo de pago y registrar la venta
+        tipo = input("¿1. Efectivo o 2. Fiado?: ")
+        if tipo == "1":
+            monto_recibido = float(input("Monto recibido: S/. "))
+            if monto_recibido >= total:
+                print(f"Vuelto: S/. {monto_recibido - total:.2f}")
+                estado = "Efectivo"
+            else:
+                print("Error: Monto insuficiente.")
+                return
+        else:
+            estado = input("Nombre del cliente: ")
 
-    # Seleccion tipo de pago con validacion
-    print("Tipo de pago:")
-    print("1. Efectivo")
-    print("2. Fiado")
-    tipo_pago = ""
-    while tipo_pago not in ["1", "2"]:
-        tipo_pago = input("Seleccione una opcion (1 o 2): ").strip()
-        if tipo_pago not in ["1", "2"]:
-            print("Error: Opcion no valida. Ingrese 1 o 2.")
-
-    if tipo_pago == "1":
-        # RQ-02: calcular_vuelto()
-        dinero_texto = ""
-        while True:
-            dinero_texto = input("Ingrese dinero recibido: ").strip()
-            try:
-                dinero = float(dinero_texto)
-                if dinero < total:
-                    print("Error: Dinero insuficiente. El total es S/.", round(total, 2))
-                else:
-                    break
-            except ValueError:
-                print("Error: Ingrese un monto numerico valido.")
-        vuelto = dinero - total
-        print("Vuelto correcto: S/.", round(vuelto, 2))
-        print("Venta registrada correctamente.")
-        estado_pago = "Efectivo"
-
-    else:
-        # RQ-06: registrar_fiado()
-        cliente = ""
-        while cliente == "":
-            cliente = input("Ingrese nombre del cliente que debe: ").strip()
-            if cliente == "":
-                print("Error: El nombre del cliente no puede estar vacio.")
-        print("Fiado registrado. Deuda de S/.", round(total, 2), "guardada para el cliente:", cliente)
-        estado_pago = cliente
-
-    # RQ-03: actualizar_stock()
-    stock[indice] -= cantidad
-    print("Stock actualizado:", stock[indice], "unidades restantes.")
-
-    # Guardar en historial
-    h_ventas.append(nombres[indice])
-    h_montos.append(round(total, 2))
-    h_deudores.append(estado_pago)
-
-    # Guardar en archivo ventas.txt
-    guardar_venta_archivo(nombres[indice], round(total, 2), estado_pago)
-
+        # Guardar después de cada venta
+        stock[seleccion] -= cantidad
+        h_ventas.append(nombres[seleccion])
+        h_montos.append(total)
+        h_deudores.append(estado)
+        guardar_historial_ventas(h_ventas, h_montos, h_deudores) 
+        print("¡Venta registrada con éxito!")
+        
+    except ValueError:
+        print("Error: Entrada no válida.")
 
 # ============================================================
 # FUNCION 2: Ver stock (RQ-04)
@@ -294,8 +264,8 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
     if os.path.exists("ventas.csv"):
         try:
             with open("ventas.csv", "r", encoding="utf-8") as f:
-                reader = csv.reader(f)
-                next(reader) 
+                reader = csv.reader(f, delimiter=';') #ruben , para que en el excel se separen las columnas correctamente
+                next(reader, None)  
                 
                 
                 h_ventas.clear()
@@ -303,14 +273,14 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
                 h_deudores.clear()
                 
                 for fila in reader:
-                    if fila:
+                    if len(fila) == 3:
                         h_ventas.append(fila[0])
                         h_montos.append(float(fila[1]))
                         h_deudores.append(fila[2])
         except Exception as e:
             print(f"Error al leer el historial: {e}")
 
-  #-----------------------------------------------------------
+  
 
     print("\n--- REPORTE DE HISTORICOS (Ventas y Cuentas por Cobrar) ---")
 
@@ -408,12 +378,12 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
     # MEJORA 7: Guardar reporte en archivo
     try:
         with open("reporte.csv", "w", newline="", encoding="utf-8") as archivo:
-            writer = csv.writer(archivo)
+            writer = csv.writer(archivo, delimiter=';') #ruben , para que en el excel se separen las columnas correctamente
 
-            # Encabezados
+           
             writer.writerow(["N° Venta", "Producto", "Monto", "Estado"])
 
-            # Estructuras paralelas
+           
             for i in range(len(h_ventas)):
 
                 if h_deudores[i] == "Efectivo":
@@ -428,13 +398,6 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
                     estado
                 ])
 
-            # Resumen
-            writer.writerow([])
-            writer.writerow(["RESUMEN"])
-            writer.writerow(["Total vendido", total_vendido])
-            writer.writerow(["Ventas pagadas", ventas_pagadas])
-            writer.writerow(["Ventas por cobrar", ventas_credito])
-            writer.writerow(["Promedio por venta", round(promedio, 2)])
 
         print("\nReporte guardado correctamente en 'reporte.csv'")
     except Exception as e:
@@ -447,10 +410,9 @@ def generar_reporte(h_ventas, h_montos, h_deudores):
 # - Guarda inventario en archivo inventario.csv
 # ============================================================
 
-def salir(nombres, precios, stock):
+def salir(nombres, precios, stock, secciones):
     print("\n--- SALIR DEL SISTEMA ---")
 
-    # Confirmacion antes de cerrar
     confirmacion = ""
     while confirmacion not in ["s", "n"]:
         confirmacion = input("¿Esta seguro que desea salir? (S/N): ").strip().lower()
@@ -464,17 +426,18 @@ def salir(nombres, precios, stock):
     # Guardar inventario en CSV
     try:
         with open("inventario.csv", "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, delimiter=';')
 
-            # Encabezados
-            writer.writerow(["Producto", "Precio", "Stock"])
+            
+            writer.writerow(["Producto", "Precio", "Stock", "Seccion"])
 
-            # Estructuras paralelas
+           
             for i in range(len(nombres)):
                 writer.writerow([
                     nombres[i],
                     precios[i],
-                    stock[i]
+                    stock[i],
+                    secciones[i] 
                 ])
 
         print("Inventario guardado correctamente en 'inventario.csv'")
@@ -523,9 +486,8 @@ def menu_principal():
         print("5. Salir")
         opcion = input("Seleccione una opcion: ").strip()
 
-        if opcion == "1":
-            registrar_venta(nombres_productos, precios_productos, stock_productos,
-                            historial_ventas, historial_montos, historial_deudores)
+        if opcion == "1":                                                           
+            registrar_venta(nombres_productos, precios_productos, stock_productos, secciones_productos, historial_ventas, historial_montos, historial_deudores)
         elif opcion == "2":
             ver_stock(nombres_productos, precios_productos, stock_productos)
         elif opcion == "3":
@@ -533,7 +495,7 @@ def menu_principal():
         elif opcion == "4":
             generar_reporte(historial_ventas, historial_montos, historial_deudores)
         elif opcion == "5":
-            cerrar = salir(nombres_productos, precios_productos, stock_productos)
+            cerrar = salir(nombres_productos,  precios_productos, stock_productos, secciones_productos)
             if not cerrar:
                 opcion = "0"  # Cancelar salida, volver al menu
         else:
@@ -542,25 +504,30 @@ def menu_principal():
 #Ruben
 
 def cargar_inventario():
+
+    #ruben - Limpiar las listas antes de cargar para evitar duplicados en caso de múltiples cargas
+    nombres_productos.clear()
+    precios_productos.clear()
+    stock_productos.clear()
+    
+    secciones_productos.clear()
+
     if os.path.exists("inventario.csv"):
-        try:
-            with open("inventario.csv", "r", encoding="utf-8") as f:
-                reader = csv.reader(f)
-                next(reader)  
-                
-                
-                nombres_productos.clear()
-                precios_productos.clear()
-                stock_productos.clear()
-                
-              
-                for fila in reader:
-                    if fila:  
-                        nombres_productos.append(fila[0])
-                        precios_productos.append(float(fila[1]))
-                        stock_productos.append(int(fila[2]))
-            print("Inventario cargado exitosamente desde 'inventario.csv'.")
-        except Exception as e:
+     try:
+        with open("inventario.csv", "r", encoding="utf-8") as f:
+            lineas = f.readlines()
+            for linea in lineas[1:]:
+                linea = linea.strip()
+                if linea:  
+                    datos = linea.split(';') # Aquí se separan los datos por el punto y coma
+                    if len(datos) == 4:
+                        nombres_productos.append(datos[0])
+                        precios_productos.append(float(datos[1]))
+                        stock_productos.append(int(datos[2]))
+                        secciones_productos.append(datos[3])
+        print("Inventario cargado exitosamente.")
+        
+     except Exception as e:
             print(f"Error al cargar el inventario: {e}")
     else:
         print("No se encontró archivo de inventario previo. Iniciando con valores predeterminados.")
@@ -569,24 +536,66 @@ def cargar_ventas():
     if os.path.exists("ventas.csv"):
         try:
             with open("ventas.csv", "r", encoding="utf-8") as f:
-                reader = csv.reader(f)
-                next(reader) 
-                
+                reader = csv.reader(f, delimiter=';')
+                next(reader, None)  
                 
                 historial_ventas.clear()
                 historial_montos.clear()
                 historial_deudores.clear()
                 
                 for fila in reader:
-                    if fila:
+                    if len(fila) == 3:
                         historial_ventas.append(fila[0])
                         historial_montos.append(float(fila[1]))
                         historial_deudores.append(fila[2])
+
             print("Historial de ventas y deudas cargado correctamente.")
         except Exception as e:
             print(f"Error al cargar historial: {e}")
 
 
+def ver_stock(nombres, precios, stock):
+    print("\n" + "="*70)
+    print("                    CATÁLOGO DE LA TIENDA")
+    print("="*70)
+    
+    if not nombres: 
+        print("El inventario está vacío.")
+        return
+
+    print(f"{'PRODUCTO':<30} | {'PRECIO':<10} | {'STOCK':<8} | {'SECCIÓN'}")
+    print("-" * 70)
+    
+    for i in range(len(nombres)):
+        print(f"{nombres[i]:<30} | S/. {precios[i]:<6} | {stock[i]:<8} | {secciones_productos[i]}")
+        
+    print("="*70 + "\n")
+
+
+def guardar_inventario(nombres, precios, stock, secciones):
+    print(f"DEBUG: Voy a guardar {len(nombres)} productos.") 
+    try:
+        with open("inventario.csv", "w", encoding="utf-8") as f:
+            f.write("Producto,Precio,Stock,Seccion\n")
+            for i in range(len(nombres)):
+                f.write(f"{nombres[i]},{precios[i]},{stock[i]},{secciones[i]}\n")
+        print("Datos guardados con éxito.")
+    except Exception as e:
+        print(f"Error al guardar: {e}")
+
+def guardar_historial_ventas(h_ventas, h_montos, h_deudores):
+    try:
+        with open("ventas.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f, delimiter=';') 
+            
+            
+            writer.writerow(["Producto", "Monto", "Estado"])
+            
+            for i in range(len(h_ventas)):
+                writer.writerow([h_ventas[i], h_montos[i], h_deudores[i]])
+                
+    except Exception as e:
+        print(f"Error al guardar historial: {e}")
 
 # --- PUNTO DE ENTRADA ---
 menu_principal()
